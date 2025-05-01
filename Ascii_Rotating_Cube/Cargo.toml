@@ -1,0 +1,11 @@
+[package]
+name = "Ascii_Rotating_Cube"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ncurses = "6.0.1"
+
+[[bin]]
+name = "Ascii_Rotating_Cube"
+path = "main.rs"
