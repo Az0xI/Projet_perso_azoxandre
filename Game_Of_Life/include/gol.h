@@ -10,6 +10,7 @@
     #include <unistd.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <linux/limits.h>
 
     #define DEFAULT_LENGHT 30
     #define DEFAULT_WIDTH 30

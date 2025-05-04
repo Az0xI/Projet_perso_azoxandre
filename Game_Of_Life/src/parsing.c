@@ -6,13 +6,29 @@
 
 static char **map_from_file(char *path)
 {
-    // Handle path potential errors
-    if (access(path, X_OK) == -1) {
-        fprintf(stderr, "Invalid path: File does not exist.\n");
+    // find the absolute path
+    char ab_path[PATH_MAX] = {0};
+    char const *cwd = getcwd(ab_path, PATH_MAX);
+    char *abs_path = calloc(sizeof(char), sizeof(char) * (strlen(ab_path) + strlen(cwd) + 2));
+
+    if (abs_path == NULL) {
+        fprintf(stderr, "Malloc has failed\n");
         return NULL;
     }
-    if (access(path, R_OK) == -1) {
+    strcpy(abs_path, cwd);
+    strcat(abs_path, "/");
+    strcat(abs_path, path);
+
+    // Handle path potential errors
+    if (access(abs_path, F_OK) != 0) {
+        fprintf(stderr, "Invalid path: File does not exist.\n");
+        free(abs_path);
+        return NULL;
+    }
+    if (access(abs_path, R_OK) != 0) {
         fprintf(stderr, "Invalid access, doesn't have the right to open the file.\n");
+        free(abs_path);
+        return NULL;
     }
 
     FILE *file = fopen(path, "r");
@@ -32,19 +48,21 @@ static char **map_from_file(char *path)
     rewind(file); // FUnction to set the file position to the beggining of the file
 
     // Fill the map array
-    char **map = malloc(sizeof(char) * (nb_lines + 1));
+    char **map = calloc(sizeof(char *), sizeof(char *) * (nb_lines + 1));
 
     if (map == NULL) {
         fprintf(stderr, "Malloc has failed\n");
         return NULL;
     }
     for (int i = 0; getline(&buffer, &size, file) != -1; i++) {
-        if (buffer[size - 1] == '\n')
-            buffer[size - 1] = '\0';
+        if (buffer[strlen(buffer) - 1] == '\n')
+            buffer[strlen(buffer) - 1] = '\0';
         map[i] = strdup(buffer);
     }
     map[nb_lines] = NULL;
 
+    free(buffer);
+    free(abs_path);
     fclose(file);
     return map;
 }
@@ -81,6 +99,7 @@ char **parse_arg(int ac, char *argv[])
 {
     char **map = NULL;
 
+    // Parse arguments
     if (ac == 1) {
         map = init_default_map();
         if (map == NULL) {fprintf(stderr, "Malloc has faild\n"); return NULL;}
@@ -91,10 +110,5 @@ char **parse_arg(int ac, char *argv[])
         fprintf(stderr, "Wrong number of argument, expected only 2");
         return NULL;
     }
-    for (int i = 0; map[i] != NULL; i++) {
-        printw(map[i]);
-    }
-    refresh();
-    getch();
     return map;
 }
