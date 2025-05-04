@@ -1,3 +1,11 @@
+## Code Dependances ##
+
 Ascii_Rotating_Cube/target
 *.o
 *.a
+
+## Binary Name ##
+GoL
+
+## Extern ##
+vgcore*
