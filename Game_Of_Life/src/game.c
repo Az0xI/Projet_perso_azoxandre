@@ -17,23 +17,24 @@ static void display_map(char **map)
 
 static void process_changes(char **map, int i, int j)
 {
-    int nb_voisin = map[i][j] == 'X' ? -1 : 0;
-    int x = i == 0 ? i : i - 1;
-    int y = j == 0 ? j : j - 1;
+    int nb_neigh = map[i][j] == '.' ? 0 : -1;
+    int x = i <= 0 ? 0 : i - 1;
+    int y = j <= 0 ? 0 : j - 1;
 
+    //printf("mapij = %c nb_voisin = %i\n", map[i][j], nb_voisin);
     // Check for neighbour and error handling
     for (; x <= i + 1 && map[x] != NULL; x++) {
-        printf("x = %i y = %i\n", x, y);
+        //printf("x = %i y = %i\n", x, y);
         for (; y <= j + 1 && map[x][y] != '\0'; y++) {
-            nb_voisin = (map[x][y] != '.' ? nb_voisin + 1 : nb_voisin);
+            nb_neigh = (map[x][y] != '.' ? nb_neigh + 1 : nb_neigh);
         }
-        y = j < 0 ? 0 : j - 1;
+        y = j <= 0 ? 0 : j - 1;
     }
-    x--;
+    printf("%i", nb_neigh);
     // Modify array with the game rules
-    if ((nb_voisin < 2 || nb_voisin > 3) && map[x][y] == 'X') map[x][y] = 'O';
-    if ((nb_voisin < 2 || nb_voisin > 3) && map[x][y] != 'X') map[x][y] = '.';
-    if (nb_voisin == 3) map[x][y] = 'X';
+    if ((nb_neigh < 2 || nb_neigh > 3) && map[i][j] == 'X') map[i][j] = 'O';
+    if ((nb_neigh < 2 || nb_neigh > 3) && map[i][j] != 'X') map[i][j] = '.';
+    if (nb_neigh == 3) map[i][j] = 'X';
 }
 
 int game_of_life(int ac, char *argv[])
@@ -44,10 +45,12 @@ int game_of_life(int ac, char *argv[])
 
     // Game loop
     while (true) {
-        for (int i = 0; map[i] != NULL; i++)
+        display_map(map);
+        for (int i = 0; map[i] != NULL; i++) {
             for (int j = 0; map[i][j] != '\0'; j++)
                 process_changes(map, i, j);
-        display_map(map);
+            printf("\n");
+        }
         sleep(3);
     }
 
