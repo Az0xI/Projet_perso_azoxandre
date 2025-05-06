@@ -14,6 +14,11 @@
 
     #define DEFAULT_LENGHT 30
     #define DEFAULT_WIDTH 30
+    #define LIVE 'X'
+    #define TO_LIVE 'Y'
+    #define DEAD '.'
+    #define TO_DIE 'O'
+
 
 // print the help message //
 int print_help(void);
