@@ -6,6 +6,7 @@ Ascii_Rotating_Cube/target
 
 ## Binary Name ##
 GoL
+*.out
 
 ## Extern ##
 vgcore*
